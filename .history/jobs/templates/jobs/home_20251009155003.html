@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobBoard | Find Your Dream Job</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>JOBS</span></div>
+    <nav>
+      <ul>
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Jobs</a></li>
+        <li><a href="#">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find the Best <span>JOBS</span> for You</h1>
+      <p>Discover thousands of job opportunities tailored to your skills.</p>
+      <button class="cta" onclick="showMessage()">Get Started</button>
+    </div>
+  </section>
+
+  <section class="job-listings">
+    <h2>Latest Jobs</h2>
+    <div class="job-container">
+      <div class="job-card">
+        <img src="{% static 'images/hero-bg.jpg' %}" alt="Adobe">
+        <h3>Frontend Developer</h3>
+        <p>Adobe Inc. - Nairobi</p>
+        <button>Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <img src="{% static 'images/hero-bg.jpg' %}" alt="Google">
+        <h3>Backend Engineer</h3>
+        <p>Google - Remote</p>
+        <button>Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <img src="{% static 'images/hero-bg.jpg' %}" alt="Meta">
+        <h3>UI/UX Designer</h3>
+        <p>Meta - Kisumu</p>
+        <button>Apply Now</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia Hafsa.</p>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

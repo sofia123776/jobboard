@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobBoard - Find Your Dream Job</title>
+
+    <!-- Link the external CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>JobBoard</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Jobs</a></li>
+                <li><a href="#">Post a Job</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Find Your Dream Job Today</h2>
+        <p>Thousands of opportunities waiting for you.</p>
+        <button onclick="showMessage()">Get Started</button>
+    </section>
+
+    <footer>
+        <p>© 2025 JobBoard. All rights reserved.</p>
+    </footer>
+
+    <!-- Link the JavaScript -->
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
