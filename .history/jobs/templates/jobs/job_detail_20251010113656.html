@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <h1>{{ job.title }}</h1>
+  <p><strong>Company:</strong> {{ job.company }}</p>
+  <p><strong>Location:</strong> {{ job.location }}</p>
+  <p><strong>Salary:</strong> {{ job.salary }}</p>
+  <p><strong>Posted by:</strong> {{ job.posted_by.username }}</p>
+  <p><strong>Date:</strong> {{ job.date_posted|date:"M d, Y" }}</p>
+  <p>{{ job.description }}</p>
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'apply_job' job.id %}" class="btn btn-success">Apply Now</a>
+  {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary">Login to Apply</a>
+  {% endif %}
+</div>
+{% endblock %}
+
+</body>
+</html>

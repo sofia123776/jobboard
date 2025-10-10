@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply for {{ job.title }} | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'job_list' %}">Jobs</a></li>
+        <li><a href="#">About</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Apply for: {{ job.title }}</h1>
+    <p class="job-info"><strong>{{ job.company }}</strong> - {{ job.location }}</p>
+    
+    <div class="apply-container">
+      <div class="job-details">
+        <h3>Job Description</h3>
+        <p>{{ job.description|linebreaks }}</p>
+      </div>
+      
+      <div class="form-container">
+        <h3>Application Form</h3>
+        <form method="POST" enctype="multipart/form-data" class="application-form">
+          {% csrf_token %}
+          
+          <div class="applicant-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p><strong>Applicant:</strong> {{ user.get_full_name|default:user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+          </div>
+          
+          <div class="form-group">
+            <label for="id_cover_letter">Cover Letter</label>
+            {{ form.cover_letter }}
+          </div>
+          
+          <div class="form-group">
+            <label for="id_resume">Upload Resume</label>
+            {{ form.resume }}
+            <small style="display: block; margin-top: 5px; color: #666;">Accepted formats: PDF, DOC, DOCX</small>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+            <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-primary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+</body>
+</html>

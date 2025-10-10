@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobBoard | Find Your Dream Jobs</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <!-- 🔹 NAVBAR -->
+  <header class="navbar">
+    <div class="logo">JDP<span>JOBS</span></div>
+    <nav>
+      <ul style="list-style:none; display:flex; gap:20px; align-items:center; margin-right:50px;">
+        <li><a href="{% url 'home' %}" style="text-decoration:none; color:#000;">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Jobs</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}" style="text-decoration:none; color:#000;">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}" style="text-decoration:none; color:#000;">Login</a></li>
+          <li><a href="{% url 'register' %}" style="text-decoration:none; color:#000;">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 🔹 HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find the Best <span>Jobs</span> for You</h1>
+      <p>Discover thousands of opportunities tailored to your skills and passion.</p>
+      <a href="#jobs" class="cta">Get Started</a>
+    </div>
+  </section>
+
+  <!-- 🔹 JOB LISTINGS -->
+  <section id="jobs" class="job-listings">
+    <h2>Latest Jobs</h2>
+
+    {% if jobs %}
+      <div class="job-container">
+        {% for job in jobs %}
+          <div class="job-card">
+            {% if job.company_logo %}
+              <img src="{{ job.company_logo.url }}" alt="{{ job.company_name }}">
+            {% else %}
+              <img src="{% static 'images/default-job.jpg' %}" alt="Job Image">
+            {% endif %}
+            
+            <h3>{{ job.title }}</h3>
+            <p>{{ job.company_name }} - {{ job.location }}</p>
+            <a href="{% url 'job_detail' job.id %}" class="apply-btn">View Details</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="text-align:center; margin-top:30px;">No jobs available at the moment. Check back soon!</p>
+    {% endif %}
+  </section>
+
+  <!-- 🔹 FOOTER -->
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by <strong>Sofia Hafsa</strong>.</p>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

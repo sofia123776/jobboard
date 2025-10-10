@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobBoard | Find Your Dream Job</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+  <ul style="list-style:none; display:flex; gap:20px; align-items:center; margin-right:50px;">
+    <li><a href="{% url 'home' %}" style="text-decoration:none; color:#000;">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Jobs</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'logout' %}" style="text-decoration:none; color:#000;">Logout</a></li>
+    {% else %}
+      <li><a href="{% url 'login' %}" style="text-decoration:none; color:#000;">Login</a></li>
+      <li><a href="{% url 'register' %}" style="text-decoration:none; color:#000;">Register</a></li>
+    {% endif %}
+  </ul>
+</nav>
+  </header>
+  {% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Available Jobs</h1>
+  {% if user.is_authenticated %}
+    <a href="{% url 'post_job' %}" class="btn btn-primary">+ Post a Job</a>
+  {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary">Login to Post</a>
+  {% endif %}
+
+  <div class="job-list">
+    {% for job in jobs %}
+      <div class="job-card">
+        <h2>{{ job.title }}</h2>
+        <p><strong>{{ job.company }}</strong> — {{ job.location }}</p>
+        <p>{{ job.description|truncatewords:25 }}</p>
+        <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-primary">View Details</a>
+      </div>
+    {% empty %}
+      <p>No jobs yet. Be the first to <a href="{% url 'post_job' %}">post one</a>!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find the Best <span>Jobs</span> for You</h1>
+      <p>Discover thousands of job opportunities tailored to your skills.</p>
+      <button class="cta" onclick="showMessage()">Get Started</button>
+    </div>
+  </section>
+
+  <section class="job-listings">
+    <h2>Latest Jobs</h2>
+    <div class="job-container">
+      <div class="job-card">
+        <img src="{% static 'images/hero-bg.jpg' %}" alt="Adobe">
+        <h3>Frontend Developer</h3>
+        <p>Adobe Inc. - Nairobi</p>
+        <button>Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <img src="{% static 'images/heroin-bg.jpg' %}" alt="Google">
+        <h3>Backend Engineer</h3>
+        <p>Google - Remote</p>
+        <button>Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <img src="{% static 'images/heroine-bg.jpg' %}" alt="Meta">
+        <h3>UI/UX Designer</h3>
+        <p>Meta - Kisumu</p>
+        <button>Apply Now</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

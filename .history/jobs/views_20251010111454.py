@@ -5,14 +5,8 @@ from .models import Job, Application
 from .forms import JobForm, ApplicationForm
 
 def home(request):
-    # Get latest jobs for the home page (limit to 3 for featured section)
-    latest_jobs = Job.objects.all().order_by('-date_posted')[:3]
-    return render(request, 'jobs/home.html', {'latest_jobs': latest_jobs})
-
-def job_list(request):
-    # Get all jobs for the jobs listing page
     jobs = Job.objects.all().order_by('-date_posted')
-    return render(request, 'jobs/job_list.html', {'jobs': jobs})
+    return render(request, 'jobs/home.html', {'jobs': jobs})
 
 def job_detail(request, job_id):
     job = get_object_or_404(Job, pk=job_id)
@@ -27,7 +21,7 @@ def post_job(request):
             job.posted_by = request.user
             job.save()
             messages.success(request, 'Job posted successfully!')
-            return redirect('job_list')  # Redirect to job list after posting
+            return redirect('home')
     else:
         form = JobForm()
     return render(request, 'jobs/post_job.html', {'form': form})
@@ -35,25 +29,16 @@ def post_job(request):
 @login_required
 def apply_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    
-    # Check if user has already applied for this job
-    existing_application = Application.objects.filter(applicant=request.user, job=job).first()
-    if existing_application:
-        messages.warning(request, 'You have already applied for this job!')
-        return redirect('job_detail', job_id=job.id)
-    
     if request.method == 'POST':
         form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
             application.applicant = request.user
             application.job = job
-            # Set the full_name and email from the user model
-            application.full_name = f"{request.user.first_name} {request.user.last_name}".strip()
-            application.email = request.user.email
             application.save()
             messages.success(request, 'Application submitted successfully!')
             return redirect('job_detail', job_id=job.id)
     else:
         form = ApplicationForm()
     return render(request, 'jobs/apply_job.html', {'form': form, 'job': job})
+

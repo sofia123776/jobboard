@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Job | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+      <ul style="list-style:none; display:flex; gap:20px; align-items:center; margin-right:50px;">
+        <li><a href="{% url 'home' %}" style="text-decoration:none; color:#000;">Home</a></li>
+        <li><a href="{% url 'job_list' %}" style="text-decoration:none; color:#000;">Jobs</a></li>
+        <li><a href="#">About</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}" style="text-decoration:none; color:#000;">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}" style="text-decoration:none; color:#000;">Login</a></li>
+          <li><a href="{% url 'register' %}" style="text-decoration:none; color:#000;">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Post a New Job</h1>
+    
+    <div class="form-container">
+      <form method="POST" class="job-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="title">Job Title</label>
+          <input type="text" id="title" name="title" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Job Description</label>
+          <textarea id="description" name="description" rows="5" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="requirements">Requirements</label>
+          <textarea id="requirements" name="requirements" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="salary">Salary (optional)</label>
+          <input type="text" id="salary" name="salary">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Post Job</button>
+          <a href="{% url 'job_list' %}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+</body>
+</html>

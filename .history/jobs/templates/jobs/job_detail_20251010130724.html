@@ -11,15 +11,15 @@
   <header class="navbar">
     <div class="logo">JDP<span>Jobs</span></div>
     <nav>
-      <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'job_list' %}">Jobs</a></li>
+      <ul style="list-style:none; display:flex; gap:20px; align-items:center; margin-right:50px;">
+        <li><a href="{% url 'home' %}" style="text-decoration:none; color:#000;">Home</a></li>
+        <li><a href="{% url 'job_list' %}" style="text-decoration:none; color:#000;">Jobs</a></li>
         <li><a href="#">About</a></li>
         {% if user.is_authenticated %}
-          <li><a href="{% url 'logout' %}">Logout</a></li>
+          <li><a href="{% url 'logout' %}" style="text-decoration:none; color:#000;">Logout</a></li>
         {% else %}
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'register' %}">Register</a></li>
+          <li><a href="{% url 'login' %}" style="text-decoration:none; color:#000;">Login</a></li>
+          <li><a href="{% url 'register' %}" style="text-decoration:none; color:#000;">Register</a></li>
         {% endif %}
       </ul>
     </nav>
@@ -28,7 +28,7 @@
   <div class="container">
     <div class="job-detail">
       <h1 class="page-title">{{ job.title }}</h1>
-      <div class="job-meta" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <div class="job-meta">
         <p><strong>Company:</strong> {{ job.company }}</p>
         <p><strong>Location:</strong> {{ job.location }}</p>
         <p><strong>Posted on:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
@@ -38,22 +38,22 @@
         <p><strong>Posted by:</strong> {{ job.posted_by.username }}</p>
       </div>
 
-      <div class="job-content" style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <div class="job-content">
         <h3>Job Description</h3>
         <p>{{ job.description|linebreaks }}</p>
       </div>
 
-      <div class="job-actions" style="margin-top: 30px; text-align: center;">
+      <div class="job-actions">
         {% if user.is_authenticated %}
           {% if user == job.posted_by %}
-            <p style="color: #004aad; font-weight: bold;">You posted this job</p>
+            <p class="text-info">You posted this job</p>
           {% else %}
             <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
           {% endif %}
         {% else %}
           <a href="{% url 'login' %}" class="btn btn-primary">Login to Apply</a>
         {% endif %}
-        <a href="{% url 'job_list' %}" class="btn btn-outline-primary">Back to Jobs</a>
+        <a href="{% url 'job_list' %}" class="btn btn-outline">Back to Jobs</a>
       </div>
     </div>
   </div>

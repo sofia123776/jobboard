@@ -48,9 +48,6 @@ def apply_job(request, job_id):
             application = form.save(commit=False)
             application.applicant = request.user
             application.job = job
-            # Set the full_name and email from the user model
-            application.full_name = f"{request.user.first_name} {request.user.last_name}".strip()
-            application.email = request.user.email
             application.save()
             messages.success(request, 'Application submitted successfully!')
             return redirect('job_detail', job_id=job.id)
