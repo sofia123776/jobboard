@@ -37,8 +37,8 @@ class Job(models.Model):
         return self.title
 
 
-class Application(models.Model):
-    STATUS_CHOICES = [
+    class Application(models.Model):
+        STATUS_CHOICES = [
         ('pending', '📝 Pending'),
         ('reviewed', '👀 Reviewed'),
         ('interview', '💼 Interview'),
@@ -53,7 +53,7 @@ class Application(models.Model):
     cover_letter = models.TextField()
     resume = models.FileField(upload_to='resumes/')
     date_applied = models.DateTimeField(default=timezone.now)
-    status = models.CharField(max_length=20, choices= STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True, null=True, help_text="Internal notes about the application")
     
     def __str__(self):

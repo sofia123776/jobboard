@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage My Jobs | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Manage My Jobs</h1>
+            <a href="{% url 'post_job' %}" class="btn btn-primary">+ Post New Job</a>
+        </div>
+
+        <div class="jobs-list">
+            {% for job in jobs %}
+            <div class="job-management-card">
+                <div class="job-info">
+                    <h3>{{ job.title }}</h3>
+                    <p class="company-location">{{ job.company }} • {{ job.location }}</p>
+                    <p class="job-description">{{ job.description|truncatewords:20 }}</p>
+                    <div class="job-meta">
+                        <span class="job-type job-type-{{ job.job_type }}">{{ job.get_job_type_display }}</span>
+                        <span class="post-date">Posted on {{ job.date_posted|date:"M d, Y" }}</span>
+                        <span class="applications-count">
+                            📊 {{ job.application_set.count }} application{{ job.application_set.count|pluralize }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="job-actions">
+                    <a href="{% url 'manage_job_applications' job.id %}" class="btn btn-primary">
+                        Manage Applications ({{ job.application_set.count }})
+                    </a>
+                    <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-primary">View Job</a>
+                    <a href="#" class="btn btn-outline-secondary">Edit</a>
+                    <a href="#" class="btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-jobs">
+                <h3>No jobs posted yet</h3>
+                <p>You haven't posted any jobs yet. Start by posting your first job!</p>
+                <a href="{% url 'post_job' %}" class="btn btn-primary">Post Your First Job</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

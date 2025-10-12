@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Application Details</h1>
+                <p class="subtitle">for {{ application.job.title }} at {{ application.job.company }}</p>
+            </div>
+            <a href="{% if is_employer %}{% url 'manage_job_applications' application.job.id %}{% else %}{% url 'my_applications' %}{% endif %}" 
+               class="btn btn-outline-primary">← Back</a>
+        </div>
+
+        <div class="application-detail">
+            <!-- Applicant Information -->
+            <div class="detail-section">
+                <h2>Applicant Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Full Name:</strong>
+                        <span>{{ application.full_name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        <span>{{ application.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Applied On:</strong>
+                        <span>{{ application.date_applied|date:"F d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Status:</strong>
+                        <span class="status-badge status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cover Letter -->
+            <div class="detail-section">
+                <h2>Cover Letter</h2>
+                <div class="cover-letter">
+                    {{ application.cover_letter|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Resume -->
+            <div class="detail-section">
+                <h2>Resume</h2>
+                <div class="resume-download">
+                    <a href="{{ application.resume.url }}" class="btn btn-primary" target="_blank">
+                        📄 Download Resume
+                    </a>
+                    <span class="file-info">({{ application.resume.name|slice:"-4:"|upper }} file)</span>
+                </div>
+            </div>
+
+            <!-- Employer Only Section -->
+            {% if is_employer %}
+            <div class="detail-section">
+                <h2>Update Application Status</h2>
+                <form method="POST" action="{% url 'update_application_status' application.id %}" class="status-update-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select name="status" id="status" class="form-control">
+                            {% for value, label in application.STATUS_CHOICES %}
+                                <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Internal Notes:</label>
+                        <textarea name="notes" id="notes" rows="4" class="form-control" 
+                                  placeholder="Add any internal notes about this applicant...">{{ application.notes|default:'' }}</textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

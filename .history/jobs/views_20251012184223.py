@@ -39,21 +39,8 @@ def profile(request):
 @login_required
 def my_applications(request):
     applications = Application.objects.filter(applicant=request.user).order_by('-date_applied')
-    
-    # Calculate status counts
-    status_counts = {
-        'pending': applications.filter(status='pending').count(),
-        'reviewed': applications.filter(status='reviewed').count(),
-        'interview': applications.filter(status='interview').count(),
-        'rejected': applications.filter(status='rejected').count(),
-        'accepted': applications.filter(status='accepted').count(),
-    }
-    
-    context = {
-        'applications': applications,
-        'status_counts': status_counts,
-    }
-    return render(request, 'jobs/my_applications.html', context)
+    return render(request, 'jobs/my_applications.html', {'applications': applications})
+
 @login_required
 def manage_jobs(request):
     jobs = Job.objects.filter(posted_by=request.user).order_by('-date_posted')

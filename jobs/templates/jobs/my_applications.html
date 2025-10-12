@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">My Applications</h1>
+            <a href="{% url 'job_list' %}" class="btn btn-primary">Browse More Jobs</a>
+        </div>
+
+        <!-- Application Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ applications.count }}</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            {% for status, count in status_counts.items %}
+            <div class="stat-card stat-{{ status }}">
+                <div class="stat-number">{{ count }}</div>
+                <div class="stat-label">{{ status|title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Applications List -->
+        <div class="applications-list">
+            {% for application in applications %}
+            <div class="application-card">
+                <div class="application-header">
+                    <div class="application-info">
+                        <h3>{{ application.job.title }}</h3>
+                        <p class="company-info">{{ application.job.company }} • {{ application.job.location }}</p>
+                        <p class="application-meta">
+                            Applied on {{ application.date_applied|date:"F d, Y" }} • 
+                            {{ application.job.get_job_type_display }}
+                        </p>
+                    </div>
+                    <div class="application-status">
+                        <span class="status-badge status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="application-details">
+                    <p class="cover-letter-preview">
+                        <strong>Cover Letter:</strong> {{ application.cover_letter|truncatewords:30 }}
+                    </p>
+                </div>
+                
+                <div class="application-actions">
+                    <a href="{% url 'view_application_detail' application.id %}" class="btn btn-outline-primary">
+                        View Details
+                    </a>
+                    <a href="{% url 'job_detail' application.job.id %}" class="btn btn-outline-secondary">
+                        View Job
+                    </a>
+                    {% if application.status == 'pending' %}
+                    <a href="#" class="btn btn-outline-danger">Withdraw Application</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-applications">
+                <h3>No applications yet</h3>
+                <p>You haven't applied to any jobs yet. Start browsing available jobs to apply!</p>
+                <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>
