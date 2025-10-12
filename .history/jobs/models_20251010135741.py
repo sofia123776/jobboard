@@ -16,20 +16,19 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class Job(models.Model):
-    JOB_TYPE_CHOICES = [
-        ('full-time', 'Full Time'),
-        ('part-time', 'Part Time'),
-        ('contract', 'Contract'),
-        ('internship', 'Internship'),
-        ('remote', 'Remote'),
-    ]
-    
     title = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
     description = models.TextField()
+    requirements = models.TextField(blank=True, null=True)
     salary = models.CharField(max_length=100, blank=True, null=True)
-    job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES, default='full-time')
+    job_type = models.CharField(max_length=50, choices=[
+        ('full-time', 'Full Time'),
+        ('part-time', 'Part Time'),
+        ('contract', 'Contract'),
+        ('internship', 'Internship'),
+        ('remote', 'Remote')
+    ], default='full-time')
     date_posted = models.DateTimeField(default=timezone.now)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
     

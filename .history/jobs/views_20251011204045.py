@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Job, Application, UserProfile
 from .forms import JobForm, ApplicationForm, UserProfileForm
-from django.db.models import Q
 
 @login_required
 def dashboard(request):
@@ -57,43 +56,9 @@ def home(request):
     latest_jobs = Job.objects.all().order_by('-date_posted')[:3]
     return render(request, 'jobs/home.html', {'latest_jobs': latest_jobs})
 
-
-
 def job_list(request):
     jobs = Job.objects.all().order_by('-date_posted')
-    
-    # Get search parameters
-    search_query = request.GET.get('q', '')
-    job_type = request.GET.get('job_type', '')
-    location = request.GET.get('location', '')
-    
-    # Apply filters
-    if search_query:
-        jobs = jobs.filter(
-            Q(title__icontains=search_query) | 
-            Q(description__icontains=search_query) |
-            Q(company__icontains=search_query) |
-            Q(location__icontains=search_query)
-        )
-    
-    if job_type:
-        jobs = jobs.filter(job_type=job_type)
-    
-    if location:
-        jobs = jobs.filter(location__icontains=location)
-    
-    # Get unique locations for filter dropdown
-    unique_locations = Job.objects.values_list('location', flat=True).distinct()
-    
-    context = {
-        'jobs': jobs,
-        'search_query': search_query,
-        'selected_job_type': job_type,
-        'selected_location': location,
-        'job_types': Job.JOB_TYPE_CHOICES,
-        'locations': unique_locations,
-    }
-    return render(request, 'jobs/job_list.html', context)
+    return render(request, 'jobs/job_list.html', {'jobs': jobs})
 
 def job_detail(request, job_id):
     job = get_object_or_404(Job, pk=job_id)

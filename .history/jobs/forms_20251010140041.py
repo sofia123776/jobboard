@@ -24,7 +24,7 @@ class JobForm(forms.ModelForm):
             'salary': forms.NumberInput(attrs={'class': 'form-control'}),
             'job_type': forms.Select(attrs={'class': 'form-control'}),
         }
-        
+
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application

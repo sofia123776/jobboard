@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Edit Profile</h1>
+        
+        <div class="form-container">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_headline">Headline</label>
+                    {{ form.headline }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_location">Location</label>
+                    {{ form.location }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_bio">Bio</label>
+                    {{ form.bio }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_website">Website</label>
+                    {{ form.website }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_profile_picture">Profile Picture</label>
+                    {{ form.profile_picture }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_resume">Resume</label>
+                    {{ form.resume }}
+                    <small>Upload your resume for quick applications</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Profile</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

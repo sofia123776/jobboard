@@ -24,11 +24,11 @@ class JobForm(forms.ModelForm):
             'salary': forms.NumberInput(attrs={'class': 'form-control'}),
             'job_type': forms.Select(attrs={'class': 'form-control'}),
         }
-        
+
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = ['resume', 'cover_letter']  # Remove full_name and email
+        fields = ['resume', 'cover_letter']
         widgets = {
             'cover_letter': forms.Textarea(attrs={'rows': 4, 'class': 'form-control', 'placeholder': 'Why are you interested in this position?'}),
             'resume': forms.FileInput(attrs={'class': 'form-control'}),

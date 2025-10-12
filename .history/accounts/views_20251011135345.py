@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib import auth
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate, logout  # Import specific functions
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required  # For decorators
 
 def login_view(request):
     if request.method == 'POST':
