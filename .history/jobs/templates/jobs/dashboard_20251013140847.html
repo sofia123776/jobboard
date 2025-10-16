@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}" class="active">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>Welcome back, {{ user.username }}! 👋</h1>
+                <p>Here's what's happening with your job search and posts today.</p>
+            </div>
+            <div class="welcome-actions">
+                <a href="{% url 'profile' %}" class="btn btn-outline-primary">Edit Profile</a>
+                <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
+            </div>
+        </div>
+        <a href="{% url 'job_alerts' %}" class="quick-action">
+    <div class="action-icon">🔔</div>
+    <div class="action-text">
+         <strong>Job Alerts</strong>
+            <span>Manage your alerts</span>
+        </div>
+</a>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <!-- Application Stats -->
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ application_stats.total }}</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-pending">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ application_stats.pending }}</div>
+                    <div class="stat-label">Pending Review</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-interview">
+                <div class="stat-icon">💼</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ application_stats.interview }}</div>
+                    <div class="stat-label">Interviews</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-accepted">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ application_stats.accepted }}</div>
+                    <div class="stat-label">Accepted</div>
+                </div>
+            </div>
+
+            <!-- Job Posting Stats -->
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ job_stats.total }}</div>
+                    <div class="stat-label">Jobs Posted</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ job_stats.total_applications }}</div>
+                    <div class="stat-label">Total Applicants</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Column -->
+            <div class="dashboard-column">
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <h2 class="card-title">Quick Actions</h2>
+                    <div class="quick-actions-grid">
+                        <a href="{% url 'post_job' %}" class="quick-action">
+                            <div class="action-icon">➕</div>
+                            <div class="action-text">
+                                <strong>Post a Job</strong>
+                                <span>Create new job listing</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{% url 'job_list' %}" class="quick-action">
+                            <div class="action-icon">🔍</div>
+                            <div class="action-text">
+                                <strong>Browse Jobs</strong>
+                                <span>Find new opportunities</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{% url 'profile' %}" class="quick-action">
+                            <div class="action-icon">👤</div>
+                            <div class="action-text">
+                                <strong>Update Profile</strong>
+                                <span>Edit your information</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{% url 'my_applications' %}" class="quick-action">
+                            <div class="action-icon">📨</div>
+                            <div class="action-text">
+                                <strong>My Applications</strong>
+                                <span>View all applications</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Applications</h2>
+                        <a href="{% url 'my_applications' %}" class="view-all">View All</a>
+                    </div>
+                    
+                    {% if recent_applications %}
+                    <div class="applications-list">
+                        {% for application in recent_applications %}
+                        <div class="application-item">
+                            <div class="application-main">
+                                <h4>{{ application.job.title }}</h4>
+                                <p class="company">{{ application.job.company }}</p>
+                                <p class="date">Applied {{ application.date_applied|timesince }} ago</p>
+                            </div>
+                            <div class="application-status">
+                                <span class="status-badge status-{{ application.status }}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>No applications yet</p>
+                        <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-primary">Browse Jobs</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="dashboard-column">
+                <!-- My Job Posts -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Job Posts</h2>
+                        <a href="{% url 'manage_jobs' %}" class="view-all">Manage All</a>
+                    </div>
+                    
+                    {% if recent_jobs_posted %}
+                    <div class="jobs-list">
+                        {% for job in recent_jobs_posted %}
+                        <div class="job-item">
+                            <div class="job-main">
+                                <h4>{{ job.title }}</h4>
+                                <p class="meta">{{ job.company }} • {{ job.location }}</p>
+                                <p class="applicants">
+                                    <strong>{{ job.application_count }}</strong> applicant{{ job.application_count|pluralize }}
+                                </p>
+                            </div>
+                            <div class="job-actions">
+                                <a href="{% url 'manage_job_applications' job.id %}" class="btn btn-sm btn-primary">
+                                    Manage
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>No jobs posted yet</p>
+                        <a href="{% url 'post_job' %}" class="btn btn-sm btn-outline-primary">Post First Job</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Recommended Jobs -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recommended for You</h2>
+                        <a href="{% url 'job_list' %}" class="view-all">See More</a>
+                    </div>
+                    
+                    {% if recommended_jobs %}
+                    <div class="recommended-jobs">
+                        {% for job in recommended_jobs %}
+                        <div class="recommended-job">
+                            <div class="job-info">
+                                <h4>{{ job.title }}</h4>
+                                <p class="company">{{ job.company }} • {{ job.location }}</p>
+                                <span class="job-type job-type-{{ job.job_type }}">
+                                    {{ job.get_job_type_display }}
+                                </span>
+                            </div>
+                            <div class="job-actions">
+                                <a href="{% url 'job_detail' job.id %}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                                <a href="{% url 'apply_job' job.id %}" class="btn btn-sm btn-primary">
+                                    Apply
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>No recommendations yet</p>
+                        <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-primary">Browse Jobs</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="dashboard-card tips-card">
+                    <h2 class="card-title">💡 Job Search Tips</h2>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <strong>Update Your Profile</strong>
+                            <p>Keep your profile and resume current to attract better opportunities.</p>
+                        </div>
+                        <div class="tip-item">
+                            <strong>Customize Applications</strong>
+                            <p>Tailor your cover letter for each job application.</p>
+                        </div>
+                        <div class="tip-item">
+                            <strong>Follow Up</strong>
+                            <p>Consider following up on applications after 1-2 weeks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

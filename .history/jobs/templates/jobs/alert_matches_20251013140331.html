@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matches for {{ alert.name }} | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Matches for "{{ alert.name }}"</h1>
+                <p class="subtitle">{{ jobs_count }} job{{ jobs_count|pluralize }} found matching your criteria</p>
+            </div>
+            <a href="{% url 'job_alerts' %}" class="btn btn-outline-primary">← Back to Alerts</a>
+        </div>
+
+        <!-- Alert Criteria Summary -->
+        <div class="alert-summary">
+            <h3>Your Alert Criteria:</h3>
+            <div class="criteria-summary">
+                {% if alert.keywords %}
+                <div class="criteria-item">
+                    <strong>Keywords:</strong>
+                    <span>{{ alert.keywords }}</span>
+                </div>
+                {% endif %}
+                {% if alert.location %}
+                <div class="criteria-item">
+                    <strong>Location:</strong>
+                    <span>{{ alert.location }}</span>
+                </div>
+                {% endif %}
+                {% if alert.job_type %}
+                <div class="criteria-item">
+                    <strong>Job Type:</strong>
+                    <span>{{ alert.get_job_type_display }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Matching Jobs -->
+        <div class="job-list">
+            {% for job in jobs %}
+            <div class="job-card">
+                <div class="job-header">
+                    <h3>{{ job.title }}</h3>
+                    <span class="job-type job-type-{{ job.job_type }}">{{ job.get_job_type_display }}</span>
+                </div>
+                <p class="company-location">
+                    <strong>{{ job.company }}</strong> • {{ job.location }}
+                </p>
+                <p class="job-description">{{ job.description|truncatewords:30 }}</p>
+                <div class="job-meta">
+                    <span class="post-date">📅 {{ job.date_posted|date:"M d, Y" }}</span>
+                    {% if job.salary %}
+                    <span class="salary">💵 ${{ job.salary }}</span>
+                    {% endif %}
+                </div>
+                <div class="job-actions">
+                    <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-primary">View Details</a>
+                    {% if user.is_authenticated and user != job.posted_by %}
+                        <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">Apply Now</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-matches">
+                <h3>No matches found</h3>
+                <p>No jobs currently match your alert criteria. Try adjusting your keywords or check back later.</p>
+                <a href="{% url 'edit_job_alert' alert.id %}" class="btn btn-primary">Edit This Alert</a>
+                <a href="{% url 'job_list' %}" class="btn btn-outline-primary">Browse All Jobs</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

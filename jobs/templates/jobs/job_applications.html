@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications for {{ job.title }} | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Applications for: {{ job.title }}</h1>
+                <p class="job-meta">{{ job.company_name }} • {{ job.location }}</p>
+            </div>
+            <a href="{% url 'manage_jobs' %}" class="btn btn-outline-primary">← Back to My Jobs</a>
+        </div>
+
+        {% if applications %}
+        <div class="applications-list">
+            {% for application in applications %}
+            <div class="application-card">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h3>{{ application.full_name }}</h3>
+                        <p class="applicant-email">{{ application.email }}</p>
+                        <p class="application-date">Applied on {{ application.date_applied|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="application-status">
+                        <span class="status-badge status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="application-preview">
+                    <p><strong>Cover Letter:</strong> {{ application.cover_letter|truncatewords:50 }}</p>
+                </div>
+
+                <div class="application-actions">
+                    <a href="{% url 'view_application_detail' application.id %}" class="btn btn-outline-primary">
+                        View Details
+                    </a>
+                    
+                    <div class="quick-status-update">
+                        <form method="POST" action="{% url 'update_application_status' application.id %}" class="status-form">
+                            {% csrf_token %}
+                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                <option value="pending" {% if application.status == 'pending' %}selected{% endif %}>📝 Pending</option>
+                                <option value="reviewed" {% if application.status == 'reviewed' %}selected{% endif %}>👀 Reviewed</option>
+                                <option value="interview" {% if application.status == 'interview' %}selected{% endif %}>💼 Interview</option>
+                                <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                                <option value="accepted" {% if application.status == 'accepted' %}selected{% endif %}>✅ Accepted</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-applications">
+            <h3>No applications yet</h3>
+            <p>No one has applied to this job yet. Share the job link to get applicants!</p>
+            <a href="{% url 'job_detail' job.id %}" class="btn btn-primary">View Job Posting</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

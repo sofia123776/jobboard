@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.name }} | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'company_list' %}">Companies</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Company Header -->
+        <div class="company-header">
+            <div class="company-logo-large">
+                {% if company.logo %}
+                <img src="{{ company.logo.url }}" alt="{{ company.name }}">
+                {% else %}
+                <div class="company-logo-placeholder-large">{{ company.name|make_list|first|upper }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="company-header-info">
+                <h1 class="page-title">{{ company.name }}</h1>
+                <p class="company-tagline">{{ company.get_industry_display }} • {{ company.location }}</p>
+                
+                <div class="company-stats-large">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ jobs_count }}</div>
+                        <div class="stat-label">Open Positions</div>
+                    </div>
+                    {% if company.company_size %}
+                    <div class="stat-item">
+                        <div class="stat-number">{{ company.get_company_size_display }}</div>
+                        <div class="stat-label">Company Size</div>
+                    </div>
+                    {% endif %}
+                    {% if company.founded_year %}
+                    <div class="stat-item">
+                        <div class="stat-number">{{ company.founded_year }}</div>
+                        <div class="stat-label">Founded</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="company-actions-header">
+                    {% if company.website %}
+                    <a href="{{ company.website }}" target="_blank" class="btn btn-primary">Visit Website</a>
+                    {% endif %}
+                    {% if can_edit %}
+                    <a href="{% url 'edit_company' company.id %}" class="btn btn-outline-primary">Edit Profile</a>
+                    {% endif %}
+                    <a href="{% url 'company_list' %}" class="btn btn-outline-secondary">← All Companies</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Details -->
+        <div class="company-details-layout">
+            <!-- Left Column - Company Info -->
+            <div class="company-info-column">
+                <div class="company-card">
+                    <h2>About {{ company.name }}</h2>
+                    <div class="company-description-full">
+                        {{ company.description|linebreaks }}
+                    </div>
+                    
+                    <div class="company-details-grid">
+                        {% if company.industry %}
+                        <div class="detail-item">
+                            <strong>Industry:</strong>
+                            <span>{{ company.get_industry_display }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if company.location %}
+                        <div class="detail-item">
+                            <strong>Location:</strong>
+                            <span>{{ company.location }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if company.company_size %}
+                        <div class="detail-item">
+                            <strong>Company Size:</strong>
+                            <span>{{ company.get_company_size_display }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if company.founded_year %}
+                        <div class="detail-item">
+                            <strong>Founded:</strong>
+                            <span>{{ company.founded_year }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if company.contact_email %}
+                        <div class="detail-item">
+                            <strong>Contact:</strong>
+                            <span>{{ company.contact_email }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Open Positions -->
+            <div class="company-jobs-column">
+                <div class="company-card">
+                    <h2>Open Positions ({{ jobs_count }})</h2>
+                    
+                    {% if jobs %}
+                    <div class="company-jobs-list">
+                        {% for job in jobs %}
+                        <div class="company-job-item">
+                            <div class="job-info">
+                                <h4><a href="{% url 'job_detail' job.id %}">{{ job.title }}</a></h4>
+                                <p class="job-meta">
+                                    <span class="job-type job-type-{{ job.job_type }}">{{ job.get_job_type_display }}</span>
+                                    {% if job.salary %}
+                                    <span class="salary">• ${{ job.salary }}</span>
+                                    {% endif %}
+                                </p>
+                                <p class="job-date">Posted {{ job.date_posted|timesince }} ago</p>
+                            </div>
+                            <div class="job-actions">
+                                <a href="{% url 'job_detail' job.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                {% if user.is_authenticated and user != job.posted_by %}
+                                <a href="{% url 'apply_job' job.id %}" class="btn btn-sm btn-primary">Apply</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state-small">
+                        <p>No open positions at the moment.</p>
+                        {% if can_edit %}
+                        <a href="{% url 'post_job' %}" class="btn btn-sm btn-primary">Post a Job</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

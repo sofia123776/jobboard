@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job Alert | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Edit Job Alert</h1>
+            <a href="{% url 'job_alerts' %}" class="btn btn-outline-primary">← Back to Alerts</a>
+        </div>
+
+        <div class="form-container">
+            <div class="form-intro">
+                <h3>Set up your job alert</h3>
+                <p>We'll notify you when new jobs matching your criteria are posted.</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_name">Alert Name *</label>
+                    {{ form.name }}
+                    <small class="form-help">Give this alert a memorable name (e.g., "Python Remote Jobs")</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_keywords">Keywords *</label>
+                    {{ form.keywords }}
+                    <small class="form-help">Enter relevant keywords separated by commas (e.g., python, django, remote, senior developer)</small>
+                    {% if form.keywords.errors %}
+                    <div class="error">{{ form.keywords.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_location">Location</label>
+                        {{ form.location }}
+                        <small class="form-help">Optional: Specific location or "Remote"</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_job_type">Job Type</label>
+                        {{ form.job_type }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_frequency">Notification Frequency</label>
+                    {{ form.frequency }}
+                    <small class="form-help">How often you want to receive notifications</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Job Alert</button>
+                    <a href="{% url 'job_alerts' %}" class="btn btn-outline-primary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'company_list' %}" class="active">Companies</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Explore Companies</h1>
+            {% if user.is_authenticated %}
+            <a href="{% url 'create_company' %}" class="btn btn-primary">+ Add Company</a>
+            {% endif %}
+        </div>
+
+        <!-- Industry Filter -->
+        <div class="filter-section">
+            <h3>Filter by Industry:</h3>
+            <div class="industry-filters">
+                <a href="{% url 'company_list' %}" class="industry-filter {% if not industry_filter %}active{% endif %}">All Industries</a>
+                {% for value, label in industry_choices %}
+                <a href="{% url 'company_list' %}?industry={{ value }}" class="industry-filter {% if industry_filter == value %}active{% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Companies Grid -->
+        <div class="companies-grid">
+            {% for company in companies %}
+            <div class="company-card">
+                <div class="company-logo">
+                    {% if company.logo %}
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }}">
+                    {% else %}
+                    <div class="company-logo-placeholder">{{ company.name|make_list|first|upper }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="company-info">
+                    <h3><a href="{% url 'company_detail' company.id %}">{{ company.name }}</a></h3>
+                    <p class="company-industry">{{ company.get_industry_display }}</p>
+                    <p class="company-location">📍 {{ company.location }}</p>
+                    
+                    <div class="company-stats">
+                        <span class="stat">
+                            <strong>{{ company.active_jobs_count }}</strong>
+                            <span>open jobs</span>
+                        </span>
+                        {% if company.company_size %}
+                        <span class="stat">
+                            <strong>{{ company.get_company_size_display }}</strong>
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="company-description">{{ company.description|truncatewords:20 }}</p>
+                </div>
+                
+                <div class="company-actions">
+                    <a href="{% url 'company_detail' company.id %}" class="btn btn-outline-primary">View Profile</a>
+                    {% if company.website %}
+                    <a href="{{ company.website }}" target="_blank" class="btn btn-outline-secondary">Website</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🏢</div>
+                <h3>No companies found</h3>
+                <p>No companies match your current filter.</p>
+                <a href="{% url 'company_list' %}" class="btn btn-primary">View All Companies</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_company' %}" class="btn btn-outline-primary">Add First Company</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

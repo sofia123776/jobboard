@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Job Alerts | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">My Job Alerts</h1>
+            <a href="{% url 'create_job_alert' %}" class="btn btn-primary">+ Create New Alert</a>
+        </div>
+
+        <div class="alerts-intro">
+            <p>Get notified when new jobs match your criteria. Create alerts for your ideal roles and never miss an opportunity!</p>
+        </div>
+
+        {% if alerts %}
+        <div class="alerts-grid">
+            {% for alert in alerts %}
+            <div class="alert-card {% if not alert.is_active %}alert-inactive{% endif %}">
+                <div class="alert-header">
+                    <h3>{{ alert.name }}</h3>
+                    <div class="alert-status">
+                        <span class="status-badge {% if alert.is_active %}status-active{% else %}status-inactive{% endif %}">
+                            {{ alert.is_active|yesno:"Active,Inactive" }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="alert-details">
+                    <div class="alert-criteria">
+                        {% if alert.keywords %}
+                        <div class="criteria-item">
+                            <strong>Keywords:</strong>
+                            <div class="keywords-list">
+                                {% for keyword in alert.get_keywords_list %}
+                                <span class="keyword-tag">{{ keyword }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if alert.location %}
+                        <div class="criteria-item">
+                            <strong>Location:</strong>
+                            <span>{{ alert.location }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if alert.job_type %}
+                        <div class="criteria-item">
+                            <strong>Job Type:</strong>
+                            <span class="job-type job-type-{{ alert.job_type }}">
+                                {{ alert.get_job_type_display }}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <div class="criteria-item">
+                            <strong>Frequency:</strong>
+                            <span>{{ alert.get_frequency_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-matches">
+                        <div class="matches-count">
+                            <span class="count-number">{{ alert.new_matches_count }}</span>
+                            <span class="count-label">new matches</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-actions">
+                    <a href="{% url 'view_alert_matches' alert.id %}" class="btn btn-primary">
+                        View Matches ({{ alert.new_matches_count }})
+                    </a>
+                    <a href="{% url 'edit_job_alert' alert.id %}" class="btn btn-outline-primary">Edit</a>
+                    
+                    {% if alert.is_active %}
+                    <a href="{% url 'toggle_job_alert' alert.id %}" class="btn btn-outline-warning">Pause</a>
+                    {% else %}
+                    <a href="{% url 'toggle_job_alert' alert.id %}" class="btn btn-outline-success">Activate</a>
+                    {% endif %}
+                    
+                    <a href="{% url 'delete_job_alert' alert.id %}" class="btn btn-outline-danger" 
+                       onclick="return confirm('Are you sure you want to delete this alert?')">Delete</a>
+                </div>
+
+                <div class="alert-footer">
+                    <small>Created {{ alert.created_at|timesince }} ago</small>
+                    {% if alert.last_sent %}
+                    <small>Last notified {{ alert.last_sent|timesince }} ago</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔔</div>
+            <h3>No job alerts yet</h3>
+            <p>Create your first job alert to get notified when matching jobs are posted.</p>
+            <a href="{% url 'create_job_alert' %}" class="btn btn-primary">Create Your First Alert</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>
