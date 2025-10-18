@@ -4,21 +4,6 @@ from django.utils import timezone
 from django.db.models import Q
 from django.urls import reverse
 
-
-# In jobs/models.py - make sure this exists
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    headline = models.CharField(max_length=200, blank=True, null=True)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
-
 class Company(models.Model):
     INDUSTRY_CHOICES = [
         ('technology', 'Technology'),

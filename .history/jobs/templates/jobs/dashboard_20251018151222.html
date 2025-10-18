@@ -150,7 +150,7 @@
                         <div class="application-item">
                             <div class="application-main">
                                 <h4>{{ application.job.title }}</h4>
-                                <p class="company">{{ application.job.company_name }}</p>
+                                <p class="company">{{ application.job.company }}</p>
                                 <p class="date">Applied {{ application.date_applied|timesince }} ago</p>
                             </div>
                             <div class="application-status">
@@ -219,7 +219,7 @@
                         <div class="recommended-job">
                             <div class="job-info">
                                 <h4>{{ job.title }}</h4>
-                                <p class="company">{{ job.company_name }} • {{ job.location }}</p>
+                                <p class="company">{{ job.company }} • {{ job.location }}</p>
                                 <span class="job-type job-type-{{ job.job_type }}">
                                     {{ job.get_job_type_display }}
                                 </span>

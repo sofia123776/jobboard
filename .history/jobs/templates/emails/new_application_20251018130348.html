@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #004aad; color: white; padding: 20px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; }
+        .footer { background: #333; color: white; padding: 10px; text-align: center; font-size: 12px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #004aad; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JDP Jobs</h1>
+            <h2>New Job Application Received!</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ employer_name }},</p>
+            
+            <p>You have received a new application for your job posting:</p>
+            
+            <div style="background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #004aad;">
+                <h3 style="margin-top: 0;">{{ job_title }}</h3>
+                <p><strong>Applicant:</strong> {{ applicant_name }}</p>
+                <p><strong>Email:</strong> {{ applicant_email }}</p>
+                <p><strong>Applied on:</strong> {{ application_date }}</p>
+            </div>
+            
+            <p><strong>Cover Letter Preview:</strong></p>
+            <div style="background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd;">
+                {{ cover_letter_preview|truncatewords:50 }}
+            </div>
+            
+            <p>
+                <a href="{{ application_url }}" class="btn">View Full Application</a>
+            </p>
+            
+            <p>
+                You can manage all applications for this job from your dashboard.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 JDP Jobs. All rights reserved.</p>
+            <p>This is an automated notification. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

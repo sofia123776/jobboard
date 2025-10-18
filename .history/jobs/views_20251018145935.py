@@ -5,8 +5,6 @@ from .models import Job, Application, UserProfile, JobAlert, Company
 from .forms import JobForm, ApplicationForm, UserProfileForm, JobAlertForm,CompanyForm
 from django.db.models import Q
 from django.utils import timezone
-from .emails import send_new_application_email, send_application_status_email
-
 
 @login_required
 def dashboard(request):

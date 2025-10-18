@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ job.title }} | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="job-detail">
+            <h1 class="page-title">{{ job.title }}</h1>
+            <div class="job-meta">
+                <p><strong>Company:</strong> {{ job.company_name }}</p>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Posted on:</strong> {{ job.date_posted|date:"F d, Y" }}</p>
+                {% if job.salary %}
+                    <p><strong>Salary:</strong> ${{ job.salary }}</p>
+                {% endif %}
+                <p><strong>Job Type:</strong> 
+                    <span class="job-type job-type-{{ job.job_type }}">
+                        {{ job.get_job_type_display }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="job-content">
+                <h3>Job Description</h3>
+                <p>{{ job.description|linebreaks }}</p>
+            </div>
+
+            <div class="job-actions">
+                {% if user.is_authenticated %}
+                    {% if user == job.posted_by %}
+                        <p class="text-info">You posted this job</p>
+                        <a href="{% url 'job_applications' job.id %}" class="btn btn-primary">
+                            View Applications
+                        </a>
+                    {% else %}
+                        {% if has_applied %}
+                            <p class="text-success">✅ You have already applied to this job</p>
+                            <a href="{% url 'my_applications' %}" class="btn btn-outline-primary">
+                                View My Applications
+                            </a>
+                        {% else %}
+                            <a href="{% url 'apply_job' job.id %}" class="btn btn-primary">
+                                Apply Now
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login to Apply</a>
+                {% endif %}
+                <a href="{% url 'job_list' %}" class="btn btn-outline-primary">Back to Jobs</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+    </footer>
+</body>
+</html>

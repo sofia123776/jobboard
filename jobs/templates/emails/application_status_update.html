@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #004aad; color: white; padding: 20px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; }
+        .status-update { background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #004aad; }
+        .status-pending { border-color: #ffc107; }
+        .status-reviewed { border-color: #17a2b8; }
+        .status-interview { border-color: #007bff; }
+        .status-rejected { border-color: #dc3545; }
+        .status-accepted { border-color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JDP Jobs</h1>
+            <h2>Application Status Update</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ applicant_name }},</p>
+            
+            <p>Your application status has been updated:</p>
+            
+            <div class="status-update status-{{ new_status }}">
+                <h3 style="margin-top: 0;">{{ job_title }}</h3>
+                <p><strong>Company:</strong> {{ company_name }}</p>
+                <p><strong>New Status:</strong> <strong>{{ status_display }}</strong></p>
+                <p><strong>Updated on:</strong> {{ update_date }}</p>
+            </div>
+            
+            <p>
+                <a href="{{ application_url }}" class="btn">View Your Application</a>
+                <a href="{{ job_url }}" class="btn" style="background: #6c757d;">View Job Posting</a>
+            </p>
+            
+            {% if new_status == 'interview' %}
+            <div style="background: #d4edda; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                <strong>🎉 Congratulations!</strong> You've been selected for an interview. 
+                The employer may contact you soon to schedule the next steps.
+            </div>
+            {% endif %}
+            
+            {% if new_status == 'accepted' %}
+            <div style="background: #d4edda; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                <strong>🎉 Congratulations!</strong> Your application has been accepted! 
+                The employer will contact you with further details.
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 JDP Jobs. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

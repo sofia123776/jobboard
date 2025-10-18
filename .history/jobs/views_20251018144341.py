@@ -5,8 +5,6 @@ from .models import Job, Application, UserProfile, JobAlert, Company
 from .forms import JobForm, ApplicationForm, UserProfileForm, JobAlertForm,CompanyForm
 from django.db.models import Q
 from django.utils import timezone
-from .emails import send_new_application_email, send_application_status_email
-
 
 @login_required
 def dashboard(request):
@@ -133,7 +131,7 @@ def job_list(request):
         jobs = jobs.filter(
             Q(title__icontains=search_query) | 
             Q(description__icontains=search_query) |
-            Q(company_name__icontains=search_query) |  # Use company_name, not company
+            Q(company_name__icontains=search_query) |  # Changed from company to company_name
             Q(location__icontains=search_query)
         )
     
@@ -194,25 +192,7 @@ def post_job(request):
     return render(request, 'jobs/post_job.html', {
         'form': form,
         'user_companies': user_companies,
-
     })
-def job_detail(request, job_id):
-    """View details of a specific job"""
-    job = get_object_or_404(Job, pk=job_id)
-    
-    # Check if user has already applied to this job
-    has_applied = False
-    if request.user.is_authenticated:
-        has_applied = Application.objects.filter(
-            job=job, 
-            applicant=request.user
-        ).exists()
-    
-    context = {
-        'job': job,
-        'has_applied': has_applied,
-    }
-    return render(request, 'jobs/job_detail.html', context)
 @login_required
 def apply_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
@@ -425,7 +405,7 @@ def create_company(request):
 def company_detail(request, company_id):
     """View company profile and their jobs"""
     company = get_object_or_404(Company, id=company_id)
-    # Use company_name to find jobs
+    # Use company_name to find jobs (since we don't have company foreign key yet)
     jobs = Job.objects.filter(company_name__iexact=company.name).order_by('-date_posted')
     
     # Check if user can edit this company
@@ -484,8 +464,25 @@ def my_companies(request):
     """View companies created by the user"""
     companies = Company.objects.filter(created_by=request.user).order_by('-created_at')
     
-    # Add job counts for each company (using company_name)
+    # Add job counts for each company (using company_name for now)
     for company in companies:
         company.jobs_count = Job.objects.filter(company_name__iexact=company.name).count()
     
     return render(request, 'jobs/my_companies.html', {'companies': companies})
+def job_detail(request, job_id):
+    """View details of a specific job"""
+    job = get_object_or_404(Job, pk=job_id)
+    
+    # Check if user has already applied to this job
+    has_applied = False
+    if request.user.is_authenticated:
+        has_applied = Application.objects.filter(
+            job=job, 
+            applicant=request.user
+        ).exists()
+    
+    context = {
+        'job': job,
+        'has_applied': has_applied,
+    }
+    return render(request, 'jobs/job_detail.html', context)

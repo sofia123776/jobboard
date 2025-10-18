@@ -5,8 +5,6 @@ from .models import Job, Application, UserProfile, JobAlert, Company
 from .forms import JobForm, ApplicationForm, UserProfileForm, JobAlertForm,CompanyForm
 from django.db.models import Q
 from django.utils import timezone
-from .emails import send_new_application_email, send_application_status_email
-
 
 @login_required
 def dashboard(request):
@@ -194,25 +192,7 @@ def post_job(request):
     return render(request, 'jobs/post_job.html', {
         'form': form,
         'user_companies': user_companies,
-
     })
-def job_detail(request, job_id):
-    """View details of a specific job"""
-    job = get_object_or_404(Job, pk=job_id)
-    
-    # Check if user has already applied to this job
-    has_applied = False
-    if request.user.is_authenticated:
-        has_applied = Application.objects.filter(
-            job=job, 
-            applicant=request.user
-        ).exists()
-    
-    context = {
-        'job': job,
-        'has_applied': has_applied,
-    }
-    return render(request, 'jobs/job_detail.html', context)
 @login_required
 def apply_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)

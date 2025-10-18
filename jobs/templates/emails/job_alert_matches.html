@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #004aad; color: white; padding: 20px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; }
+        .job-card { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { display: inline-block; padding: 8px 16px; background: #004aad; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JDP Jobs</h1>
+            <h2>New Jobs Matching Your Alert</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ user_name }},</p>
+            
+            <p>We found <strong>{{ jobs_count }}</strong> new job{{ jobs_count|pluralize }} matching your alert "<strong>{{ alert_name }}</strong>":</p>
+            
+            {% for job in jobs %}
+            <div class="job-card">
+                <h3 style="margin-top: 0;">{{ job.title }}</h3>
+                <p><strong>Company:</strong> {{ job.company_name }}</p>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                <p><strong>Type:</strong> {{ job.get_job_type_display }}</p>
+                {% if job.salary %}
+                <p><strong>Salary:</strong> ${{ job.salary }}</p>
+                {% endif %}
+                <p>{{ job.description|truncatewords:30 }}</p>
+                
+                <p>
+                    <a href="{{ job.get_absolute_url }}" class="btn">View Job</a>
+                    <a href="{{ job.get_absolute_url }}apply/" class="btn" style="background: #28a745;">Apply Now</a>
+                </p>
+            </div>
+            {% endfor %}
+            
+            <p>
+                <a href="{{ alert_management_url }}" class="btn">Manage Your Alerts</a>
+                <a href="{{ browse_jobs_url }}" class="btn" style="background: #6c757d;">Browse All Jobs</a>
+            </p>
+            
+            <p>
+                <small>
+                    You're receiving this email because you set up a job alert. 
+                    <a href="{{ unsubscribe_url }}">Unsubscribe from this alert</a>
+                </small>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 JDP Jobs. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
