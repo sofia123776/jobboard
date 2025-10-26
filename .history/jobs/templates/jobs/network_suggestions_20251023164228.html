@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connection Suggestions</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    {% include 'dashboard_navbar.html' %}
+    
+    <div class="container">
+        <h1>🔍 Find Connections</h1>
+        <p>Discover professionals to connect with</p>
+        
+        <div class="suggestions-grid">
+            {% for user in suggestions %}
+            <div class="user-card">
+                <!-- Similar to network_dashboard user cards -->
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

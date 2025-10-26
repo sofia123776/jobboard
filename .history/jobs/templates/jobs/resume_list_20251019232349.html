@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Resumes | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .resume-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    .resume-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #007bff;
+      transition: transform 0.2s ease;
+    }
+    .resume-card:hover {
+      transform: translateY(-2px);
+    }
+    .resume-header {
+      display: flex;
+      justify-content: between;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+    .resume-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0;
+    }
+    .match-badge {
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+    }
+    .skill-tag {
+      background: #e9ecef;
+      color: #495057;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      margin: 2px;
+      display: inline-block;
+    }
+    .resume-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'job_list' %}">Jobs</a></li>
+        <li><a href="{% url 'resume_list' %}" class="active">My Resumes</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">My Resumes</h1>
+      <a href="{% url 'upload_resume' %}" class="btn btn-primary">+ Upload New Resume</a>
+    </div>
+
+    {% if resumes %}
+      <div class="resume-grid">
+        {% for resume in resumes %}
+          <div class="resume-card">
+            <div class="resume-header">
+              <div>
+                <h3 class="resume-title">{{ resume.original_filename }}</h3>
+                <p class="text-muted">Uploaded {{ resume.uploaded_at|date:"M d, Y" }}</p>
+              </div>
+              {% if resume.parsed_data %}
+                <span class="match-badge">{{ resume.parsed_data.years_experience }} yrs exp</span>
+              {% endif %}
+            </div>
+
+            {% if resume.parsed_data %}
+              <div class="resume-content">
+                <p><strong>{{ resume.parsed_data.full_name|default:"Name not detected" }}</strong></p>
+                <p>{{ resume.parsed_data.summary|truncatewords:20 }}</p>
+                
+                <div class="skills-section">
+                  <strong>Skills:</strong><br>
+                  <div style="margin-top: 8px;">
+                    {% for skill in resume.parsed_data.get_skills_list|slice:":8" %}
+                      <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                    {% if resume.parsed_data.get_skills_list|length > 8 %}
+                      <span class="skill-tag">+{{ resume.parsed_data.get_skills_list|length|add:"-8" }} more</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="resume-content">
+                <p class="text-muted">Analysis in progress...</p>
+              </div>
+            {% endif %}
+
+            <div class="resume-actions">
+              <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-outline-primary btn-sm">View Analysis</a>
+              <a href="{% url 'match_jobs' resume.id %}" class="btn btn-primary btn-sm">Find Matching Jobs</a>
+              <button class="btn btn-outline-danger btn-sm">Delete</button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">📄</div>
+        <h3>No Resumes Yet</h3>
+        <p>Upload your first resume to get started with job matching and analysis.</p>
+        <a href="{% url 'upload_resume' %}" class="btn btn-primary">Upload Your First Resume</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+</body>
+</html>

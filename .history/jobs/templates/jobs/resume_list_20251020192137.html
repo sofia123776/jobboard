@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Resumes | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <!-- Your existing navbar -->
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">My Resumes</h1>
+      <a href="{% url 'upload_resume' %}" class="btn btn-primary">+ Upload New Resume</a>
+    </div>
+
+    {% if resumes %}
+      <div class="resume-grid" id="resumeList">
+        {% for resume in resumes %}
+          <div class="resume-card" data-resume-id="{{ resume.id }}">
+            <div class="resume-header">
+              <div>
+                <h3 class="resume-title">{{ resume.original_filename }}</h3>
+                <p class="text-muted">Uploaded {{ resume.uploaded_at|date:"M d, Y" }}</p>
+              </div>
+              {% if resume.parsed_data %}
+                <span class="match-badge">{{ resume.parsed_data.years_experience }} yrs exp</span>
+              {% endif %}
+            </div>
+
+            {% if resume.parsed_data %}
+              <div class="resume-content">
+                <p><strong>{{ resume.parsed_data.full_name|default:"Name not detected" }}</strong></p>
+                <p>{{ resume.parsed_data.summary|truncatewords:20 }}</p>
+                
+                <div class="skills-section">
+                  <strong>Skills:</strong><br>
+                  <div style="margin-top: 8px;">
+                    {% for skill in resume.parsed_data.get_skills_list|slice:":8" %}
+                      <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                    {% if resume.parsed_data.get_skills_list|length > 8 %}
+                      <span class="skill-tag">+{{ resume.parsed_data.get_skills_list|length|add:"-8" }} more</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="resume-content">
+                <p class="text-muted">Analysis in progress...</p>
+              </div>
+            {% endif %}
+
+            <div class="resume-actions">
+              <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-outline-primary btn-sm">View Analysis</a>
+              <a href="{% url 'match_jobs' resume.id %}" class="btn btn-primary btn-sm">Find Matching Jobs</a>
+              <button class="btn btn-outline-danger btn-sm delete-resume" data-resume-id="{{ resume.id }}">Delete</button>
+              {% if not resume.processed %}
+                <button class="btn btn-outline-secondary btn-sm quick-analyze" data-resume-id="{{ resume.id }}">Re-analyze</button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Empty state -->
+    {% endif %}
+  </div>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Resume | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .upload-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .upload-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .upload-area {
+      border: 3px dashed #e0e0e0;
+      border-radius: 12px;
+      padding: 60px 30px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: #fafafa;
+      cursor: pointer;
+    }
+    .upload-area:hover {
+      border-color: #007bff;
+      background: #f0f8ff;
+    }
+    .upload-area.dragover {
+      border-color: #007bff;
+      background: #e6f3ff;
+    }
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+    .file-input {
+      display: none;
+    }
+    .supported-formats {
+      color: #666;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+    .analysis-preview {
+      background: #e8f5e8;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #28a745;
+    }
+    .skill-tag {
+      background: #007bff;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 2px;
+      display: inline-block;
+    }
+    .match-score {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #28a745;
+    }
+    .analysis-section {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'job_list' %}">Jobs</a></li>
+        <li><a href="{% url 'resume_list' %}">My Resumes</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="upload-container">
+      <h1 class="page-title">Upload & Analyze Your Resume</h1>
+      <p class="job-info">Get instant feedback on your resume and see how it matches with job requirements</p>
+      
+      <div class="upload-card">
+        <h3>📄 Upload Your Resume</h3>
+        
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📁</div>
+          <h4>Drag & Drop Your Resume Here</h4>
+          <p>or click to browse files</p>
+          <p class="supported-formats">Supported formats: PDF, DOCX, DOC, TXT</p>
+          <input type="file" id="fileInput" class="file-input" accept=".pdf,.docx,.doc,.txt">
+        </div>
+
+        <div id="analysisResults" style="display: none;">
+          <div class="analysis-preview">
+            <h4>🎯 Resume Analysis Complete!</h4>
+            
+            <div class="analysis-section">
+              <p><strong>Match Score:</strong> <span id="matchScore" class="match-score">0%</span></p>
+              <p id="analysisSummary">Analyzing your resume...</p>
+            </div>
+
+            <div class="analysis-section">
+              <h5>🛠️ Skills Found</h5>
+              <div id="extractedSkills">
+                <!-- Skills will be populated here -->
+              </div>
+            </div>
+
+            <div class="analysis-section">
+              <div style="display: flex; gap: 20px;">
+                <div>
+                  <strong>📅 Experience:</strong> <span id="yearsExperience">0</span> years
+                </div>
+                <div>
+                  <strong>🎓 Education:</strong> <span id="educationLevel">Not specified</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 20px;">
+              <button onclick="saveResume()" class="btn btn-primary">💾 Save Resume</button>
+              <button onclick="analyzeAnother()" class="btn btn-outline-primary">📁 Analyze Another</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resume Analysis Features -->
+      <div class="upload-card">
+        <h3>🔍 What We Analyze</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+          <div>
+            <h5>👤 Personal Info</h5>
+            <ul>
+              <li>Name & Contact Info</li>
+              <li>Email & Phone</li>
+              <li>Location</li>
+            </ul>
+          </div>
+          <div>
+            <h5>💼 Experience</h5>
+            <ul>
+              <li>Work History</li>
+              <li>Job Titles</li>
+              <li>Years of Experience</li>
+            </ul>
+          </div>
+          <div>
+            <h5>🎓 Education</h5>
+            <ul>
+              <li>Degrees & Certifications</li>
+              <li>Institutions</li>
+              <li>Dates</li>
+            </ul>
+          </div>
+          <div>
+            <h5>🛠️ Skills</h5>
+            <ul>
+              <li>Technical Skills</li>
+              <li>Soft Skills</li>
+              <li>Tools & Technologies</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadArea = document.getElementById('uploadArea');
+      const fileInput = document.getElementById('fileInput');
+      const analysisResults = document.getElementById('analysisResults');
+
+      // Click to upload
+      uploadArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      // Drag and drop functionality
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleResumeUpload(files[0]);
+        }
+      });
+
+      // File input change
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleResumeUpload(e.target.files[0]);
+        }
+      });
+
+      function handleResumeUpload(file) {
+        if (!isValidFileType(file)) {
+          alert('Please upload a PDF, DOCX, DOC, or TXT file.');
+          return;
+        }
+
+        // Show loading state
+        uploadArea.innerHTML = `
+          <div class="upload-icon">⏳</div>
+          <h4>Analyzing Resume...</h4>
+          <p>Please wait while we process your resume</p>
+        `;
+
+        const formData = new FormData();
+        formData.append('resume', file);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        fetch('{% url "analyze_resume" %}', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            displayAnalysisResults(data);
+          } else {
+            alert('Error analyzing resume: ' + data.error);
+            resetUploadArea();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error analyzing resume. Please try again.');
+          resetUploadArea();
+        });
+      }
+
+      function isValidFileType(file) {
+        const allowedTypes = [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+          'text/plain'
+        ];
+        return allowedTypes.includes(file.type) || 
+               file.name.toLowerCase().endsWith('.pdf') ||
+               file.name.toLowerCase().endsWith('.docx') ||
+               file.name.toLowerCase().endsWith('.doc') ||
+               file.name.toLowerCase().endsWith('.txt');
+      }
+
+      function displayAnalysisResults(data) {
+        // Update analysis results
+        document.getElementById('matchScore').textContent = data.match_score + '%';
+        document.getElementById('analysisSummary').textContent = data.summary;
+        document.getElementById('yearsExperience').textContent = data.years_experience;
+        
+        // Update skills list
+        const skillsContainer = document.getElementById('extractedSkills');
+        skillsContainer.innerHTML = '';
+        if (data.skills && data.skills.length > 0) {
+          data.skills.forEach(skill => {
+            const skillTag = document.createElement('span');
+            skillTag.className = 'skill-tag';
+            skillTag.textContent = skill;
+            skillsContainer.appendChild(skillTag);
+          });
+        } else {
+          skillsContainer.innerHTML = '<p>No skills detected</p>';
+        }
+
+        // Show results
+        analysisResults.style.display = 'block';
+      }
+
+      function resetUploadArea() {
+        uploadArea.innerHTML = `
+          <div class="upload-icon">📁</div>
+          <h4>Drag & Drop Your Resume Here</h4>
+          <p>or click to browse files</p>
+          <p class="supported-formats">Supported formats: PDF, DOCX, DOC, TXT</p>
+        `;
+      }
+
+      window.saveResume = function() {
+        alert('Resume saved successfully!');
+        // In a real implementation, this would save to database
+      };
+
+      window.analyzeAnother = function() {
+        analysisResults.style.display = 'none';
+        resetUploadArea();
+        fileInput.value = '';
+      };
+    });
+  </script>
+</body>
+</html>

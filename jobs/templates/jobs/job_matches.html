@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Matches | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .matches-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .match-header {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .job-match-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #007bff;
+    }
+    .match-score {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #28a745;
+    }
+    .skill-tag {
+      background: #007bff;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 4px;
+      display: inline-block;
+    }
+    .missing-skill {
+      background: #6c757d;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 4px;
+      display: inline-block;
+    }
+    .match-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .match-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .progress-bar {
+      background: #e9ecef;
+      border-radius: 10px;
+      height: 10px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: #28a745;
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">JDP<span>Jobs</span></div>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'job_list' %}">Jobs</a></li>
+        <li><a href="{% url 'resume_list' %}">My Resumes</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="matches-container">
+      <!-- Header -->
+      <div class="match-header">
+        <div style="display: flex; justify-content: between; align-items: start;">
+          <div>
+            <h1 class="page-title">Job Matches for Your Resume</h1>
+            <p class="job-info">
+              <strong>{{ parsed_data.full_name|default:"Your Resume" }}</strong> • 
+              {{ parsed_data.years_experience }} years experience • 
+              {{ total_jobs_found }} matches found
+            </p>
+          </div>
+          <div>
+            <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-outline-primary">← Back to Resume</a>
+          </div>
+        </div>
+      </div>
+
+      {% if matched_jobs %}
+        <!-- Job Matches -->
+        {% for match in matched_jobs %}
+          <div class="job-match-card">
+            <div style="display: flex; justify-content: between; align-items: start;">
+              <div style="flex: 1;">
+                <h3>{{ match.job.title }}</h3>
+                <p class="job-info">
+                  <strong>{{ match.job.company }}</strong> • {{ match.job.location }} • 
+                  Posted {{ match.job.posted_at|date:"M d, Y" }}
+                </p>
+                
+                <p>{{ match.job.description|truncatewords:30 }}</p>
+              </div>
+              
+              <div style="text-align: center; margin-left: 20px;">
+                <div class="match-score">{{ match.match_score }}%</div>
+                <div class="score-label">Match</div>
+                <a href="{% url 'job_detail' match.job.id %}" class="btn btn-primary" style="margin-top: 10px;">Apply Now</a>
+              </div>
+            </div>
+
+            <!-- Match Breakdown -->
+            <div class="match-breakdown">
+              <div class="match-section">
+                <h5>✅ Matching Skills</h5>
+                <div>
+                  {% for skill in match.matched_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                  {% empty %}
+                    <p class="text-muted">No matching skills found</p>
+                  {% endfor %}
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: {{ match.match_score }}%"></div>
+                </div>
+              </div>
+              
+              <div class="match-section">
+                <h5>📝 Skills to Improve</h5>
+                <div>
+                  {% for skill in match.missing_skills %}
+                    <span class="missing-skill">{{ skill }}</span>
+                  {% empty %}
+                    <p class="text-success">All required skills matched!</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+              <a href="{% url 'job_detail' match.job.id %}" class="btn btn-outline-primary btn-sm">View Job Details</a>
+              <a href="{% url 'job_application' match.job.id %}" class="btn btn-primary btn-sm">Quick Apply</a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- No Matches Found -->
+        <div class="job-match-card" style="text-align: center; padding: 60px 20px;">
+          <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+          <h3>No Strong Matches Found</h3>
+          <p>We couldn't find jobs that strongly match your resume. Try updating your resume with more skills or broaden your search criteria.</p>
+          <div style="margin-top: 20px;">
+            <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-outline-primary">Improve Resume</a>
+            <a href="{% url 'job_list' %}" class="btn btn-primary">Browse All Jobs</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 JobBoard. Crafted with 💙 by Sofia.</p>
+  </footer>
+</body>
+</html>

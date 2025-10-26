@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user.get_full_name }} | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #6c757d;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .connection-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                <li><a href="{% url 'network_suggestions' %}">Network</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile_view' user.username %}">My Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="profile-header">
+        <div class="container">
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <div class="profile-avatar">
+                    {% if profile_user.profile.profile_picture %}
+                        <img src="{{ profile_user.profile.profile_picture.url }}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        👤
+                    {% endif %}
+                </div>
+                <div style="flex: 1;">
+                    <h1 style="margin: 0 0 10px 0;">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                    <p style="margin: 0 0 10px 0; font-size: 1.2em; opacity: 0.9;">
+                        {{ profile_user.profile.headline|default:"Professional" }}
+                    </p>
+                    <p style="margin: 0; opacity: 0.8;">
+                        📍 {{ profile_user.profile.location|default:"Location not specified" }}
+                    </p>
+                </div>
+                {% if user.is_authenticated and user != profile_user %}
+                <div>
+                    <button id="followBtn" 
+                            class="connection-btn {% if is_following %}btn btn-outline-light{% else %}btn btn-light{% endif %}"
+                            data-username="{{ profile_user.username }}"
+                            data-action="{% if is_following %}unfollow{% else %}follow{% endif %}">
+                        {% if is_following %}✓ Following{% else %}+ Follow{% endif %}
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Left Column -->
+            <div>
+                <!-- About Section -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <h3>About</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ profile_user.profile.about|default:"No information provided."|linebreaks }}</p>
+                    </div>
+                </div>
+
+                <!-- Experience Section -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <h3>Experience</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- You can integrate with resume data here -->
+                        <p>Experience information will appear here when available.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Stats Card -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-body">
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ followers_count }}</span>
+                                <span class="stat-label">Followers</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ following_count }}</span>
+                                <span class="stat-label">Following</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Connections</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <a href="{% url 'connections_list' profile_user.username %}?tab=followers" 
+                               class="btn btn-outline-primary btn-sm">View Connections</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Links</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if profile_user.profile.website %}
+                        <p><a href="{{ profile_user.profile.website }}" target="_blank">🌐 Website</a></p>
+                        {% endif %}
+                        {% if profile_user.profile.linkedin %}
+                        <p><a href="{{ profile_user.profile.linkedin }}" target="_blank">💼 LinkedIn</a></p>
+                        {% endif %}
+                        {% if profile_user.profile.github %}
+                        <p><a href="{{ profile_user.profile.github }}" target="_blank">💻 GitHub</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Follow/Unfollow functionality
+        document.getElementById('followBtn')?.addEventListener('click', function() {
+            const username = this.dataset.username;
+            const action = this.dataset.action;
+            const url = action === 'follow' ? 
+                `{% url 'follow_user' 'USERNAME' %}`.replace('USERNAME', username) :
+                `{% url 'unfollow_user' 'USERNAME' %}`.replace('USERNAME', username);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Toggle button state
+                    if (action === 'follow') {
+                        this.textContent = '✓ Following';
+                        this.classList.remove('btn-light');
+                        this.classList.add('btn-outline-light');
+                        this.dataset.action = 'unfollow';
+                    } else {
+                        this.textContent = '+ Follow';
+                        this.classList.remove('btn-outline-light');
+                        this.classList.add('btn-light');
+                        this.dataset.action = 'follow';
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

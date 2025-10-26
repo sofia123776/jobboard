@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Jobboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .about-hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .about-hero p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 5px solid #007bff;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .stats-section {
+            background: #f8f9fa;
+            padding: 60px 0;
+            margin: 60px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+            display: block;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .team-member {
+            text-align: center;
+            padding: 30px;
+        }
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Navigation -->
+    <header class="navbar">
+        <div class="logo">JDP<span>Jobs</span></div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Jobs</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'network_dashboard' %}">Network</a></li>
+                {% endif %}
+                <li><a href="{% url 'about' %}" class="active">About</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1>About JDP Jobs</h1>
+            <p>Connecting talented professionals with amazing opportunities through smart technology and human-centric design.</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Mission Section -->
+        <section style="margin-bottom: 60px;">
+            <div class="row">
+                <div class="col-md-8 mx-auto text-center">
+                    <h2 style="margin-bottom: 20px; color: #333;">Our Mission</h2>
+                    <p style="font-size: 1.2em; line-height: 1.8; color: #666;">
+                        At JDP Jobs, we believe that finding the right job or the perfect candidate should be 
+                        seamless, efficient, and empowering. We're revolutionizing the job search experience 
+                        with AI-powered matching, resume analysis, and professional networking tools that 
+                        actually work.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section style="margin-bottom: 60px;">
+            <h2 style="text-align: center; margin-bottom: 40px; color: #333;">Why Choose JDP Jobs?</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-icon">🤖</span>
+                        <h3>AI-Powered Matching</h3>
+                        <p>Our advanced algorithms analyze resumes and job requirements to find the perfect matches, saving you time and increasing hiring success rates.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-icon">📊</span>
+                        <h3>Smart Resume Analysis</h3>
+                        <p>Get instant feedback on your resume with our intelligent parsing technology that extracts skills, experience, and suggests improvements.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-icon">🌐</span>
+                        <h3>Professional Networking</h3>
+                        <p>Build your professional network, connect with industry peers, and discover new opportunities through our integrated networking platform.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <span class="stat-number">10,000+</span>
+                            <span class="stat-label">Active Jobs</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <span class="stat-number">50,000+</span>
+                            <span class="stat-label">Professionals</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <span class="stat-number">95%</span>
+                            <span class="stat-label">Match Accuracy</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section style="margin-bottom: 60px;">
+            <h2 style="text-align: center; margin-bottom: 40px; color: #333;">How It Works</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div style="padding: 30px;">
+                        <h3 style="color: #007bff; margin-bottom: 20px;">For Job Seekers</h3>
+                        <ol style="line-height: 2; color: #666;">
+                            <li><strong>Upload Your Resume</strong> - Get instant analysis and feedback</li>
+                            <li><strong>Discover Matches</strong> - Find jobs that fit your skills perfectly</li>
+                            <li><strong>Apply Smartly</strong> - Use our AI suggestions to improve applications</li>
+                            <li><strong>Grow Network</strong> - Connect with professionals and recruiters</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="padding: 30px;">
+                        <h3 style="color: #28a745; margin-bottom: 20px;">For Employers</h3>
+                        <ol style="line-height: 2; color: #666;">
+                            <li><strong>Post Jobs</strong> - Reach qualified candidates instantly</li>
+                            <li><strong>Analyze Resumes</strong> - Smart filtering and ranking</li>
+                            <li><strong>Find Talent</strong> - AI-powered candidate matching</li>
+                            <li><strong>Manage Pipeline</strong> - Streamlined hiring process</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section style="margin-bottom: 60px;">
+            <h2 style="text-align: center; margin-bottom: 40px; color: #333;">Built With Passion</h2>
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="team-member">
+                        <div class="team-avatar">💙</div>
+                        <h3>Sofia</h3>
+                        <p style="color: #666; font-style: italic;">
+                            "I created JDP Jobs to solve the challenges I faced in my own job search journey. 
+                            Our goal is to make job hunting and hiring more human, more efficient, and more successful 
+                            for everyone involved."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="text-align: center; padding: 60px 0;">
+            <h2 style="margin-bottom: 20px; color: #333;">Ready to Get Started?</h2>
+            <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">
+                Join thousands of professionals and companies already using JDP Jobs
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Sign Up Free</a>
+                    <a href="{% url 'job_list' %}" class="btn btn-outline-primary btn-lg">Browse Jobs</a>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #333; color: white; padding: 40px 0; margin-top: 60px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 style="color: white;">JDP Jobs</h4>
+                    <p>Making job search and hiring smarter, faster, and more human.</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p>&copy; 2025 JDP Jobs. Crafted with 💙 by Sofia.</p>
+                    <p>All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

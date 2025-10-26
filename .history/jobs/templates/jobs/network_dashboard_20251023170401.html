@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network | JobBoard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .network-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .user-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            margin: 30px 0 20px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <h1>🌐 My Network</h1>
+                <nav class="dashboard-nav">
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'dashboard' %}">🏠 Dashboard</a></li>
+                        <li><a href="{% url 'job_list' %}">💼 Jobs</a></li>
+                        <li><a href="{% url 'network_dashboard' %}" class="active">🌐 Network</a></li>
+                        <li><a href="{% url 'resume_list' %}">📄 My Resumes</a></li>
+                        <li><a href="{% url 'profile_view' user.username %}">👤 Profile</a></li>
+                    </ul>
+                </nav>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Network Stats -->
+        <div class="network-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ followers_count }}</span>
+                <span class="stat-label">Followers</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ following_count }}</span>
+                <span class="stat-label">Following</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ suggestions.count }}</span>
+                <span class="stat-label">Suggestions</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Left Column -->
+            <div>
+                <!-- Connection Suggestions -->
+                <h2 class="section-title">💡 People You May Know</h2>
+                {% for user in suggestions %}
+                <div class="user-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                👤
+                            </div>
+                            <div>
+                                <h4 style="margin: 0;">
+                                    <a href="{% url 'profile_view' user.username %}">
+                                        {{ user.get_full_name|default:user.username }}
+                                    </a>
+                                </h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9em;">
+                                    {{ user.profile.headline|default:"Professional" }}
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm follow-btn" data-username="{{ user.username }}">
+                            + Connect
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="user-card">
+                    <p style="text-align: center; color: #666; margin: 0;">
+                        No suggestions available. You're connected to everyone!
+                    </p>
+                </div>
+                {% endfor %}
+
+                {% if suggestions.count > 6 %}
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="{% url 'network_suggestions' %}" class="btn btn-outline-primary">
+                        View All Suggestions
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Quick Links -->
+                <div class="user-card">
+                    <h3 style="margin-top: 0;">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="{% url 'network_connections' %}?tab=following" class="btn btn-outline-primary">
+                            👥 View Following ({{ following_count }})
+                        </a>
+                        <a href="{% url 'network_connections' %}?tab=followers" class="btn btn-outline-primary">
+                            🔄 View Followers ({{ followers_count }})
+                        </a>
+                        <a href="{% url 'network_suggestions' %}" class="btn btn-primary">
+                            🔍 Find Connections
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Followers -->
+                <h3 class="section-title">🆕 Recent Followers</h3>
+                {% for follower in followers|slice:":5" %}
+                <div class="user-card">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                            👤
+                        </div>
+                        <div>
+                            <strong>
+                                <a href="{% url 'profile_view' follower.username %}">
+                                    {{ follower.username }}
+                                </a>
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="user-card">
+                    <p style="text-align: center; color: #666; margin: 0; font-size: 0.9em;">
+                        No followers yet
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Follow button functionality
+        document.querySelectorAll('.follow-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const username = this.dataset.username;
+                const url = `{% url 'follow_user' 'USERNAME' %}`.replace('USERNAME', username);
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = '✓ Connected';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-outline-primary');
+                        this.disabled = true;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

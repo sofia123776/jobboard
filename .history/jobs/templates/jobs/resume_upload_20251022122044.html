@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Resume | JobBoard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <a href="{%url 'dashboard'%}"></a>
+  <!-- Your existing CSS styles -->
+</head>
+<body>
+  <!-- Your existing HTML structure -->
+  <div class="upload-area" id="uploadArea">
+    <div class="upload-icon">📁</div>
+    <h4>Drag & Drop Your Resume Here</h4>
+    <p>or click to browse files</p>
+    <p class="supported-formats">Supported formats: PDF, DOCX, DOC, TXT</p>
+    <input type="file" id="fileInput" class="file-input" accept=".pdf,.docx,.doc,.txt">
+  </div>
+
+  <div id="analysisResults" style="display: none;">
+    <!-- Analysis results structure -->
+  </div>
+
+  <!-- Include the external script -->
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
